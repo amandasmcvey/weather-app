@@ -14,8 +14,10 @@
         <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js" defer></script>
         <script src="./js/main.js" defer></script>
     </head>
+    
     <body class="d-flex h-100 text-center text-white bg-dark">
         <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
+            
             <header class="mb-auto">
                 <div>
                     <h3 class="float-md-start mb-0">Weather App</h3>
@@ -29,23 +31,26 @@
         
             <main class="container px-3">
                 <h1>what's the weather?</h1>
-                    <div class="form-floating d-flex">
-                        <input type="password" class="form-control" id="searchInput" placeholder="Search">
-                        <label class="text-dark" for="searchInput">Search your location</label>
-                    
-                        <button class="btn btn-outline-secondary" type="button" id="currLocBtn"><img src="./images/cursor.svg" alt="use current location"></button>
-                    </div>
+                
+                <div class="form-floating d-flex">
+                    <input type="password" class="form-control" id="searchInput" placeholder="Search">
+                    <label class="text-dark" for="searchInput">Search your location</label>
+                
+                    <button class="btn btn-outline-secondary" type="button" id="getWeatherBtn"><img src="./images/cursor.svg" alt="use current location"></button>
+                </div>
 
-                <p class="lead"></p>
+                <button class="btn btn-outline-light m-3" type="button" id="currLocBtn">Use my Location</button>
+
+                <div id="app">
+
+                </div>
         
             </main>
         
             <footer class="mt-auto text-white-50">
-            <p>Weather data provided by <a href="https://www.metaweather.com/" class="text-white">MetaWeather</a>.</p>
+                <p>Weather data provided by <a href="https://www.metaweather.com/" class="text-white">MetaWeather</a>.</p>
             </footer>
         </div>
-        <div id="app">
 
-        </div>
     </body>
     </html>
