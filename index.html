@@ -31,18 +31,17 @@
         
             <main class="container px-3">
                 <h1>what's the weather?</h1>
-                
-                <div class="form-floating d-flex">
-                    <input type="password" class="form-control" id="searchInput" placeholder="Search">
-                    <label class="text-dark" for="searchInput">Search your location</label>
-                
-                    <button class="btn btn-outline-secondary" type="button" id="getWeatherBtn"><img src="./images/cursor.svg" alt="use current location"></button>
-                </div>
-
-                <button class="btn btn-outline-light m-3" type="button" id="currLocBtn">Use my Location</button>
-
                 <div id="app">
+                    <div class="form-floating d-flex">
+                        <input type="password" class="form-control" id="searchInput" placeholder="Search" v-model="query">
+                        <label class="text-dark" for="searchInput">Search your location</label>
+                    
+                        <button class="btn btn-outline-secondary" type="button" id="getWeatherBtn" ><img src="./images/cursor.svg" alt="use current location" v-on:click="getMetaWeatherAjax"></button>
+                    </div>
 
+                    <button class="btn btn-outline-light m-3" type="button" id="currLocBtn" v-on:click="getCurrLoc">Use my Location</button>
+
+                    {{ locationName }}
                 </div>
         
             </main>

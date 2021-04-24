@@ -28,11 +28,10 @@ const app = new Vue({
     },
     methods: {
         getMetaWeatherAjax(method, data) {
-            
             var apiUrl = "";
 
             switch (method) {
-                case locSearch:
+                case "locSearch":
 
                     if (data.coords) {
                         apiUrl = "search/?lattlong=";
@@ -44,15 +43,16 @@ const app = new Vue({
                     }
                     
                     break;
-                case todayForecast:
+                case "todayForecast":
 
                     var todayDate = new Date();
-                    var dd = String(today.getDate());
-                    var mm = String(today.getMonth() + 1);
-                    var yyyy = today.getFullYear();
+                    var dd = String(todayDate.getDate());
+                    var mm = String(todayDate.getMonth() + 1);
+                    var yyyy = todayDate.getFullYear();
 
                     todayDate = yyyy + '/' + mm + '/' + dd;
-                    apiUrl = data.woeid + "/" + todayDate;
+                    apiUrl = data.woeid;
+                    //+ "/" + todayDate;
                     break;
             
                 default:
@@ -62,35 +62,40 @@ const app = new Vue({
             //add error handling
 
             $.ajax({
-                url: "https://www.metaweather.com/api/location/" + apiUrl,
+                url: "https://desolate-shore-12077.herokuapp.com/https://www.metaweather.com/api/location/" + apiUrl,
                 method: 'GET',
-                success: function (data) {
-                    switch (method) {
-                        case locSearch:
-
-                            getMetaWeatherAjax("todayForecast", {"woeid": woeid});                           
-                            break;
+                success:(data) => {
+                    if (data) {
+                        switch (method) {
+                            case "locSearch":
+                                //data[0] is closest location to location name or coords entered
+                                if (data[0]){
+                                    this.getMetaWeatherAjax("todayForecast", { "woeid": data[0].woeid });
+                                }
+                                break;
+                            
+                            case "todayForecast":
+                                //data.consolidated_weather[0] is latest weather available
+                                this.locationName = data.title;
+                                this.time = data.time;
+                                this.date = data.consolidated_weather[0].applicable_date;
+                                this.weather.desc = data.consolidated_weather[0].weather_state_name;
+                                this.weather.abbr = data.consolidated_weather[0].weather_state_abbr;
+                                this.weather.wind.speed = data.consolidated_weather[0].wind_speed;
+                                this.weather.wind.dir = data.consolidated_weather[0].wind_direction;
+                                this.weather.temp.curr = data.consolidated_weather[0].the_temp;
+                                this.weather.temp.min = data.consolidated_weather[0].min_temp;
+                                this.weather.temp.max = data.consolidated_weather[0].max_temp;
+                                this.weather.airPressure = data.consolidated_weather[0].air_pressure;
+                                this.weather.humidity = data.consolidated_weather[0].humidity;
+                                this.weather.visibility = data.consolidated_weather[0].visibility;
+                                this.weather.predictability = data.consolidated_weather[0].predictability;
+                                break;
                         
-                        case todayForecast:
-                            this.locationName = data.title;
-                            this.time = data.time;
-                            this.date = data.consolidated_weather.applicable_date;
-                            this.weather.desc = data.consolidated_weather.weather_state_name;
-                            this.weather.abbr = data.consolidated_weather.weather_state_abbr;
-                            this.weather.wind.speed = data.consolidated_weather.wind_speed;
-                            this.weather.wind.dir = data.consolidated_weather.wind_direction;
-                            this.weather.temp.curr = data.consolidated_weather.the_temp;
-                            this.weather.temp.min = data.consolidated_weather.min_temp;
-                            this.weather.temp.max = data.consolidated_weather.max_temp;
-                            this.weather.airPressure = data.consolidated_weather.air_pressure;
-                            this.weather.humidity = data.consolidated_weather.humidity;
-                            this.weather.visibility = data.consolidated_weather.visibility; 
-                            this.weather.predictability = data.consolidated_weather.predictability;
-                            break;
-                    
-                        default:
+                            default:
 
-                            break;
+                                break;
+                        }
                     }
                     //add error handling                
                 },
@@ -105,7 +110,7 @@ const app = new Vue({
                 navigator.geolocation.getCurrentPosition((pos) => {
                     var lat = pos.coords.latitude;
                     var long = pos.coords.longitude;
-                    getMetaWeatherAjax("locSearch", { "coords": { "lat": lat, "long": long } });
+                    this.getMetaWeatherAjax("locSearch", { "coords": { "lat": lat, "long": long } });
                 });
             } else {
                 // "Geolocation is not supported by this browser."
