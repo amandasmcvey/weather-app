@@ -30,18 +30,57 @@
             </header>
         
             <main class="container px-3">
-                <h1>what's the weather?</h1>
                 <div id="app">
-                    <div class="form-floating d-flex">
-                        <input type="password" class="form-control" id="searchInput" placeholder="Search" v-model="query">
-                        <label class="text-dark" for="searchInput">Search your location</label>
+
+                    <div id="weatherDiv" class="mb-5" style="display: none;">
+
+                        <div v-if="locationNameOutput" class="row my-3">
+                            <div class="col h3">
+                                {{locationNameOutput}}
+                            </div>
+                        </div>
+
+                        <div v-if="weather.temp.curr" class="row display-1">
+                            <div class="col">
+                                {{ weather.temp.curr }} &#730; C
+                            </div>
+                        </div>
+
+                        <div class="row display-5">
+                            <div v-if="weather.temp.min" class="col">
+                                Low: {{ weather.temp.min }}  &#730; C
+                            </div>
+                            <div v-if="weather.temp.max" class="col">
+                                High {{ weather.temp.max }} &#730; C
+                            </div>
+                        </div>
+
+                        <div v-if="weather.desc" class="row display-5">
+                            <div class="col">
+                                {{ weather.desc }}
+                            </div>
+                        </div>
+
+                        <div v-if="weather.predictability" class="row display-6">
+                            <div class="col">
+                                {{ weather.predictability }}% chance
+                            </div>
+                        </div>
+                    </div>
+
                     
-                        <button class="btn btn-outline-secondary" type="button" id="getWeatherBtn" ><img src="./images/cursor.svg" alt="use current location" v-on:click="getMetaWeatherAjax"></button>
+                    <h1>what's the weather?</h1>
+
+                    <div class="d-flex">
+                        <div class="form-floating w-100">
+                            <input class="form-control" id="searchInput" placeholder="Search" v-model="locationNameInput">
+                            <label class="text-dark" for="searchInput">Search your location</label>
+                        </div>
+                        <button class="btn btn-outline-secondary" type="button" id="getWeatherBtn" v-on:click="getMetaWeatherAjax"><img src="./images/cursor.svg" alt="use current location"></button>
                     </div>
 
                     <button class="btn btn-outline-light m-3" type="button" id="currLocBtn" v-on:click="getCurrLoc">Use my Location</button>
 
-                    {{ locationName }}
                 </div>
         
             </main>
@@ -52,4 +91,4 @@
         </div>
 
     </body>
-    </html>
+</html>

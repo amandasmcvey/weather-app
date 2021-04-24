@@ -1,11 +1,9 @@
 const app = new Vue({
     el: "#app",
     data: {
-        locationName: "",
-        coords: {
-            lat: "",
-            long: ""
-        },
+        showWeatherDiv: false,
+        locationNameInput: "",
+        locationNameOutput: "",
         time: "",
         date: "",
         weather: {
@@ -31,6 +29,7 @@ const app = new Vue({
             var apiUrl = "";
 
             if (data.woeid) {
+                $("#weatherDiv").slideUp();
                 //if (data.woeid) === true, we have location ID and can request weather
                 apiUrl = data.woeid;
             } else if (data.coords) {
@@ -38,12 +37,13 @@ const app = new Vue({
                 apiUrl = "search/?lattlong=";
                 apiUrl += data.coords.lat + ',';
                 apiUrl += data.coords.long;
-            } else if (this.locationName) {
+            } else if (this.locationNameInput) {
                 //if have query from DOM input (searchInput), need to request location ID (woeid)
                 apiUrl = "search/?query=";
-                apiUrl += this.locationName;
+                apiUrl += this.locationNameInput;
             } else {
                 this.getCurrLoc();
+                return;
             }
 
             $.ajax({
@@ -55,21 +55,23 @@ const app = new Vue({
                             //if (data.woeid) === true, we requested weather data and expect such in response
                             //response.consolidated_weather[0] is latest weather available
 
-                            this.locationName = response.title;
+                            this.locationNameOutput = response.title;
                             this.time = response.time;
                             this.date = response.consolidated_weather[0].applicable_date;
                             this.weather.desc = response.consolidated_weather[0].weather_state_name;
                             this.weather.abbr = response.consolidated_weather[0].weather_state_abbr;
                             this.weather.wind.speed = response.consolidated_weather[0].wind_speed;
                             this.weather.wind.dir = response.consolidated_weather[0].wind_direction;
-                            this.weather.temp.curr = response.consolidated_weather[0].the_temp;
-                            this.weather.temp.min = response.consolidated_weather[0].min_temp;
-                            this.weather.temp.max = response.consolidated_weather[0].max_temp;
+                            this.weather.temp.curr = response.consolidated_weather[0].the_temp.toFixed(1);
+                            this.weather.temp.min = response.consolidated_weather[0].min_temp.toFixed(1);
+                            this.weather.temp.max = response.consolidated_weather[0].max_temp.toFixed(1);
                             this.weather.airPressure = response.consolidated_weather[0].air_pressure;
                             this.weather.humidity = response.consolidated_weather[0].humidity;
                             this.weather.visibility = response.consolidated_weather[0].visibility;
                             this.weather.predictability = response.consolidated_weather[0].predictability;
-                        } else if (data.coords || this.locationName) {
+
+                            $("#weatherDiv").slideDown();
+                        } else if (response[0] && (data.coords || this.locationNameInput)) {
                              //if have coordinates from geo locator or query from DOM input, we requested location ID (woeid)
                             //can now request weather data using weather ID 
                             //response[0] is closest location to location name or coords entered
@@ -97,6 +99,7 @@ const app = new Vue({
             } else {
                 console.error("Geolocation is not supported by this browser.");
                 //default to Dallas
+                this.locationNameInput = "Dallas";
                 this.getMetaWeatherAjax({ "woeid": 2388929 });
             }
     
