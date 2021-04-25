@@ -1,7 +1,6 @@
 const app = new Vue({
     el: "#app",
     data: {
-        showWeatherDiv: false,
         locationNameInput: "",
         locationNameOutput: "",
         time: "",
@@ -42,6 +41,7 @@ const app = new Vue({
                 apiUrl = "search/?query=";
                 apiUrl += this.locationNameInput;
             } else {
+                //if no woeid or query provided, default to local weather
                 this.getCurrLoc();
                 return;
             }
@@ -51,10 +51,9 @@ const app = new Vue({
                 method: 'GET',
                 success:(response) => {
                     if (response) {
-                        if (data.woeid) {
+                        if (data.woeid && response.consolidated_weather[0]) {
                             //if (data.woeid) === true, we requested weather data and expect such in response
                             //response.consolidated_weather[0] is latest weather available
-
                             this.locationNameOutput = response.title;
                             this.time = response.time;
                             this.date = response.consolidated_weather[0].applicable_date;
@@ -77,9 +76,11 @@ const app = new Vue({
                             //response[0] is closest location to location name or coords entered
                             this.getMetaWeatherAjax({ "woeid": response[0].woeid });
                         } else {
+                            //if no response, try requesting local weather
                             this.getCurrLoc();
                         }
                     } else {
+                        //if no response, try requesting local weather
                         this.getCurrLoc();
                     }               
                 },
@@ -102,8 +103,6 @@ const app = new Vue({
                 this.locationNameInput = "Dallas";
                 this.getMetaWeatherAjax({ "woeid": 2388929 });
             }
-    
-            //add error handling
         }
     }
 });
